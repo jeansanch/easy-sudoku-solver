@@ -1,40 +1,31 @@
 table = []
 
-def init_table:
+def init_table():
 	file = open("sudoku.txt", "r")
 	countline = 0
 	for lines in file:
-		while countline < 9
-			countchar = 0
-			countline++
+		print("LINES > ",lines)
+		countchar = 0
+		countline += 1
+		if countline < 10:
 			for char in lines:
-				if countchar < 9 && char > 0 && char < 10
+				print("CHAR > ",char)
+				if countchar < 9 and int(char) > 0 and int(char) < 10:
 					table.append(char)
-					countchar++
-				else
+					countchar += 1
+				elif char != '\n':
 					table.append(0)
-					countchar++
-# pattern is
-# 12#4#6789
-# 235#781##
+					countchar += 1
+		else:
+			break
+	#printSolut()
 
 def compare(pos):
-0  1  2    3  4  5    6  7  8
-9  10 11   12 13 14   15 16 17
-18 19 20   21 22 23   24 25 26
-
-27 28 29   30 31 32   33 34 35
-36 37 38   39 40 41   42 43 44
-45 46 47   48 49 50   51 52 53
-
-54 55 56   57 58 59   60 61 62
-63 64 65   66 67 68   69 70 71
-72 73 74   75 76 77   78 79 80
-
 	numbers = set([])
-	offset = pos % 9
-	line = pos / 9
-	for i in range(0..9)
+	free = [1,2,3,4,5,6,7,8,9]
+	offset = int(pos % 9) #27%9 = 0
+	line = int(pos / 9) # 27/9 = 3
+	for i in range(0,9):
 		#columns
 		if(table[i*9 + offset] != 0):
 			numbers.add(table[i*9+offset])
@@ -42,14 +33,44 @@ def compare(pos):
 		if(table[line*9+i] != 0):
 			numbers.add(table[line*9+i])
 		#3x3
-		if( ((offset/3)*3) + ((line/3)*9) + ((i/3)*9) + (i % 3) != 0)
-			numbers.add(table[((offset/3)*3) + ((line/3)*9) + ((i/3)*9) + (i % 3)])
+		if( (int(offset/3)*3) + (int(line/3)*27) + (int(i/3)*9) + (i % 3) != 0):
+			numbers.add(table[(int(offset/3)*3) + (int(line/3)*27) + (int(i/3)*9) + (i % 3)])
+	for i in numbers:
+		try:
+			free.remove(int(i))
+		except:
+			pass
+	if len(free) == 1:
+		print("ADDING > ",free[0]," IN > (",line+1,",",offset+1,")")
+		write(pos, free[0])
+		return 1
+	#------------------ Simulation for possible solutions ------------------
+	return 0
 
-def write(pos[x,y?], value):
+def write(pos, value):
+	table[pos] = value
 
 def run():
-	done = 1
-	while(done == 1):
+	init_table()
+	done = 0
+	changed = 1
+	while(done == 0 and changed == 1):
+		changed = 0
+		done = 1
 		for i, x in enumerate(table):
 			if x == 0:
-				compare(i)
+				done = 0
+				if (compare(i) == 1):
+					changed = 1
+	printSolut()
+
+def printSolut():
+	count = 0
+	for i in table:
+		print(" ",i,"|", end = '')
+		count += 1
+		if count == 9:
+			print("\n---------------------------------------------")
+			count = 0
+
+run()
